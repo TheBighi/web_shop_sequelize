@@ -3,7 +3,14 @@ const bodyParser = require('body-parser');
 
 const app = express();
 const port = 3000;
+
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const productAdminRoutes = require('./routes/admin/products');
+app.use('/admin', productAdminRoutes);
+
+const productRoutes = require('./routes/products');
+app.use(productRoutes);
 
 const sequelize = require('./util/db');
 
