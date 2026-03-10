@@ -7,6 +7,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const sequelize = require('./util/db');
 
+const models = require('./models/index');
+sequelize.Models = models;
+
+sequelize.sync()
+  .then(() => {
+    console.log('Database synchronized.');
+  })
+  .catch(err => {
+    console.error('Error synchronizing database:', err);
+  });
+
 sequelize.authenticate()
   .then(() => {
     console.log('Ok, successful.');
