@@ -34,7 +34,11 @@ const productAdminRoutes = require('./routes/admin/products');
 app.use('/admin', productAdminRoutes);
 
 const productRoutes = require('./routes/products');
+const Cart = require('./models/cart');
 app.use(productRoutes);
+
+const shopRoutes = require('./routes/shop');
+app.use(shopRoutes);
 
 sequelize.sync({ force: true })
   .then(() => {
@@ -47,9 +51,11 @@ sequelize.sync({ force: true })
     return user;
   })
   .then(user => {
-    app.listen(port, () => {
-      console.log(`http://localhost:${port}`);
-    });
+    return user.createCart()
+  })
+  .then((cart) => {
+    console.log("HERE IS CART " + cart);
+    app.listen(port)
   })
   .catch(err => {
     console.error('Error synchronizing database:', err);
