@@ -3,7 +3,7 @@ const Product = require('../../models/product');
 class AdminController {
     
     async addProduct(req, res) {
-        console.log(req.user)
+        console.log(req.body)
         const product = await Product.create({
             title: req.body.title,
             price: req.body.price,
