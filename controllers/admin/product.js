@@ -3,11 +3,13 @@ const Product = require('../../models/product');
 class AdminController {
     
     async addProduct(req, res) {
+        console.log(req.user)
         const product = await Product.create({
             title: req.body.title,
             price: req.body.price,
             imageUrl: req.body.imageUrl,
-            description: req.body.description
+            description: req.body.description,
+            userId: req.user.id
         })
         res.status(201).json(product)
     }
@@ -49,4 +51,4 @@ class AdminController {
 
 }
 
-module.exports = new AdminController()
+module.exports = new AdminController();

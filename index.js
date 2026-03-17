@@ -1,10 +1,34 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const sequelize = require('./util/db');
+const models = require('./models/index');
+
+sequelize.Models = models;
 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+
+
+app.use((req, res, next) => {
+  console.log("HERE IS REQ " + req);
+  models.User.findByPk(1)
+  .then(user => {
+    console.log("HERE IS USER " + user);
+    req.user = user;
+    next();
+  })
+  .catch(err => {
+    console.error('Error fetching user:', err);
+    next(err);
+  });
+});
+
+
+
+
 
 const productAdminRoutes = require('./routes/admin/products');
 app.use('/admin', productAdminRoutes);
@@ -12,14 +36,20 @@ app.use('/admin', productAdminRoutes);
 const productRoutes = require('./routes/products');
 app.use(productRoutes);
 
-const sequelize = require('./util/db');
-
-const models = require('./models/index');
-sequelize.Models = models;
-
-sequelize.sync()
+sequelize.sync({ force: true })
   .then(() => {
-    console.log('Database synchronized.');
+    return models.User.findByPk(1);
+  })
+  .then(user => {
+    if (!user) {
+      return models.User.create({ name: 'Sander', email: 'sander@example.com' });
+    }
+    return user;
+  })
+  .then(user => {
+    app.listen(port, () => {
+      console.log(`http://localhost:${port}`);
+    });
   })
   .catch(err => {
     console.error('Error synchronizing database:', err);
